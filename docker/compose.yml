@@ -1,0 +1,50 @@
+version: "3.2"
+services:
+  django:
+    image: saturn5/local-django-server
+    depends_on:
+      - postgres
+      - redis
+      - mailhog
+    volumes:
+      - type: bind
+          source: $HOST$DJANGO_PATH
+          target: /app
+    env_file:
+      - $ENV_PATH
+    ports:
+      - "8014:8014"
+    command: /start-server
+
+    postgres:
+      image: postgres:$POSTGRES_VERSION
+      env_file:
+        - $ENV_PATH
+      ports:
+        - "${POSTGRES_PORT}:5432"
+
+    mailhog:
+      image: mailhog/mailhog:v1.0.0
+      ports:
+        - "${MAILHOG_HTTP_PORT}:8025"
+        - "${MAILHOG_SMTP_PORT}:1025"
+
+    redis:
+      image: redis:5.0
+      ports:
+        - "${REDIS_PORT}:6379"
+
+    worker:
+      image: saturn5/local-django-server
+      depends_on:
+        - redis
+        - postgres
+        - mailhog
+      volumes:
+        - type: bind
+          source: $HOST$DJANGO_PATH
+          target: /app
+      env_file:
+        - $ENV_PATH
+      ports: []
+      command: /start-worker

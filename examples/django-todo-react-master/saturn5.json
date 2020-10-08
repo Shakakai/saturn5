@@ -1,0 +1,12 @@
+{
+  "name": "django-todo-react",
+  "backend": {
+    "djangoDir": "./backend"
+  },
+  "frontend": {
+    "buildDir": "./frontend",
+    "buildCommand": "npm install && npm build",
+    "serveDir": "./frontend/build",
+    "nodeVersion": "6.1.14"
+  }
+}
