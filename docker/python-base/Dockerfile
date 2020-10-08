@@ -1,39 +1,17 @@
-FROM shakakai:python-base
+FROM python:3.8-alpine
 
 # Install Docker
-RUN apt-get update \
-    && apt-get install -y wget \
-    && apt-get install -y dumb-init
+RUN apk update \
+    && apk add wget \
+    && apk add dumb-init
 
 RUN pip install pipenv
 
 # Install Watchman - https://github.com/facebook/watchman/releases
 RUN wget "https://github.com/facebook/watchman/releases/download/v2020.09.21.00/watchman-v2020.09.21.00-linux.zip" --output-document="watchman.zip"
 RUN unzip "watchman.zip"
-RUN ls -l
 RUN mkdir -p /usr/local/{bin,lib} /usr/local/var/run/watchman
 RUN cp -r watchman-v2020.09.21.00-linux/bin/* /usr/local/bin
 RUN cp -r watchman-v2020.09.21.00-linux/lib/* /usr/local/lib
 RUN chmod 755 /usr/local/bin/watchman
 RUN chmod 2777 /usr/local/var/run/watchman
-
-# Create user and group
-RUN addgroup --system django
-RUN adduser --system --ingroup django django
-
-# Setup Startup Script
-COPY ./start-server.sh /start
-RUN sed -i 's/\r$//g' /start
-RUN chmod +x /start
-RUN chown django /start
-
-# Create directory to mount application files
-RUN mkdir /app
-RUN chown django /app
-
-USER django
-
-WORKDIR /app
-
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["bash", "-c", "/start"]
