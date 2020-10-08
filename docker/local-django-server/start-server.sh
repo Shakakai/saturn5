@@ -17,4 +17,4 @@ echo "Run migrations"
 pipenv run python manage.py migrate
 
 echo "Starting dev server..."
-pipenv run python manage.py runserver "$DJANGO_PORT"
+pipenv run python manage.py runserver 5000

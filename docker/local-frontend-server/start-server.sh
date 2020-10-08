@@ -5,7 +5,6 @@
 #set -o nounset
 
 cd /app || exit
-cd "$FRONTEND_PATH" || exit
 
 nvm install "$NODE_VERSION"
 nvm use "$NODE_VERSION"
