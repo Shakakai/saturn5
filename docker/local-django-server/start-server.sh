@@ -6,12 +6,15 @@
 
 cd /app || exit
 
+echo "Install python dependencies"
+pipenv install
+
 echo "Collect static files for django"
-python manage.py collectstatic --clear --noinput # clearstatic files
-python manage.py collectstatic --noinput  # collect static files
+pipenv run python manage.py collectstatic --clear --noinput # clearstatic files
+pipenv run python manage.py collectstatic --noinput  # collect static files
 
 echo "Run migrations"
-python manage.py migrate
+pipenv run python manage.py migrate
 
 echo "Starting dev server..."
-python manage.py runserver "$DJANGO_PORT"
+pipenv run python manage.py runserver "$DJANGO_PORT"

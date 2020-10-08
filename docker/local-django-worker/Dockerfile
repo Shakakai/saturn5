@@ -21,7 +21,7 @@ RUN addgroup --system django
 RUN adduser --system --ingroup django django
 
 # Setup Startup Script
-COPY ./start-server.sh /start
+COPY ./startup.sh /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
 RUN chown django /start
