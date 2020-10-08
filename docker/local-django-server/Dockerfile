@@ -1,4 +1,4 @@
-FROM shakakai:python-base
+FROM shakakai/python-base:latest
 
 # Create user and group
 RUN addgroup --system django

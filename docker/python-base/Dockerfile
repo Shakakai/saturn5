@@ -2,6 +2,7 @@ FROM python:3.8-alpine
 
 # Install Docker
 RUN apk update \
+    && apk upgrade \
     && apk add wget \
     && apk add dumb-init
 
