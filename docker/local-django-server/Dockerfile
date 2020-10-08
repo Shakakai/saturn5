@@ -1,10 +1,9 @@
 FROM python:3.8-alpine
 
 # Install Docker
-RUN apt-get update \
-    && apt-get install -y \
-    && curl \
-    && dumb-init
+RUN apk update \
+    && apk install -y curl \
+    && apk install -y dumb-init
 
 RUN pip install pipenv
 
