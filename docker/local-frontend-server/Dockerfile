@@ -18,7 +18,7 @@ RUN chown web /start
 RUN mkdir /app
 RUN chown web /app
 
-USER django
+USER web
 
 WORKDIR /app
 

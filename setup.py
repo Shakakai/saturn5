@@ -19,7 +19,8 @@ setup(
     install_requires=[
         'docopt',   # For command line arguments.
         'jsonschema',
-        'docker'
+        'docker',
+        'python-dotenv'
     ],
     entry_points={
         'console_scripts': [

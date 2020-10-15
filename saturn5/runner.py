@@ -1,95 +1,29 @@
 import os
 import json
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-from docker.api import APIClient
-from docker.constants import DEFAULT_DOCKER_API_VERSION
+import subprocess
 
-EXAMPLE = {
-    "djangoDir": "./backend",
-    "staticFrontend": {
-        "buildDir": "./frontend",
-        "buildCommand": "yarn build",
-        "serveDir": "./frontend/build"
-    }
-}
-
-BACKEND_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "djangoDir": {"type": "string"}
-    },
-    "required": ["djangoDir"]
-}
-
-FRONTEND_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "buildDir": {"type": "string"},
-        "buildCommand": {"type": "string"},
-        "serveDir": {"type": "string"}
-    },
-    "required": ["buildDir", "buildCommand", "serveDir"]
-}
-
-SCHEMA = {
-    "type": "object",
-    "properties": {
-        "backend": BACKEND_SCHEMA,
-        "frontend": FRONTEND_SCHEMA
-    },
-    "required": ["backend"]
-}
-
-SATURN_JSON = "./saturn5.json"
-
-
-def __get_docker():
-    client = APIClient(version=DEFAULT_DOCKER_API_VERSION)
-    return client
-
-
-def __get_saturn_json():
-    with open(SATURN_JSON, "r") as f:
-        app_metadata = json.load(f)
-    return app_metadata
+from saturn5.project import Project
+from saturn5.utils.docker import validate_docker_installation, get_docker_client, run_docker_compose
 
 
 def check():
     # Make sure Docker and Docker Compose are installed
-    try:
-        client = __get_docker()
-        client.ping()
-    except Exception as e:
-        print("Docker is not installed.")
-        print(e)
-        return False
-
-    # Confirm saturn5.json is in project
-    if not os.path.exists(SATURN_JSON):
-        print("Not in project directory or no saturn5.json file created yet.")
+    valid, reason = validate_docker_installation()
+    if not valid:
+        print(f"Error. {reason}")
         return False
 
     # Read JSON file
     try:
-        app_metadata = __get_saturn_json()
+        project = Project()
     except Exception as e:
-        print("saturn5.json could not be accessed. Are permissions set properly?")
-        print(e)
-        return False
-
-    # Validate Saturn5 JSON
-    try:
-        validate(instance=app_metadata, schema=SCHEMA)
-    except ValidationError as e:
-        print("saturn5.json failed validation")
+        print("Loading saturn5.json failed.")
         print(e)
         return False
 
     # Confirm manage.py location
-    django_root = app_metadata["backend"]["djangoDir"]
-    manage_path = os.path.join(django_root, "manage.py")
-    if not os.path.exists(manage_path):
+    manage_path = project.backend.directory / "manage.py"
+    if not manage_path.exists():
         print("Configured djangoRoot does not contain a manage.py file. Check path set in saturn5.json")
         return False
 
@@ -101,21 +35,44 @@ def run():
     if not check():
         return False
 
-    # Create Docker Client
-    client = __get_docker()
+    project = Project()
 
-    # Fire up Docker Compose for the current build
+    env_vars = {
+        "PROJECT_DIR": str(project.directory),
+    }
 
-    # Use bind mounts to mount the
-    client.create_volume()
-    container = client.containers.run('ubuntu:latest', 'ls -ltr /tmp',
-                                      volumes={os.getcwd(): {'bind': '/tmp/', 'mode': 'rw'}}, detach=True)
-    print(container.logs())
+    if project.backend is not None:
+        env_vars["BACKEND_PORT"] = project.backend.port
+        env_vars["BACKEND_DIR"] = str(project.backend.directory)
 
-    # Need to use bind mounts
-    # https://docs.docker.com/storage/bind-mounts/
+    if project.frontend is not None:
+        env_vars["FRONTEND_DIR"] = str(project.frontend.directory)
+        env_vars["FRONTEND_PORT"] = str(project.frontend.port)
+        env_vars["NODE_VERSION"] = project.frontend.node_version
+        env_vars["FRONTEND_BUILD_CMD"] = project.frontend.build_command
+        env_vars["FRONTEND_DEV_CMD"] = project.frontend.development_command
+        env_vars["FRONTEND_BUILD_DIR"] = str(project.frontend.build_directory)
 
-    #
+    if project.database is not None:
+        env_vars["DATABASE_ENGINE"] = project.database.engine
+        env_vars["DATABASE_PORT"] = project.database.port
+        env_vars["DATABASE_VERSION"] = project.database.version
+        env_vars["DATABASE_USERNAME"] = project.database.username
+        env_vars["DATABASE_PASSWORD"] = project.database.password
+
+    if project.cache is not None:
+        env_vars["CACHE_ENGINE"] = project.cache.engine
+        env_vars["CACHE_VERSION"] = project.cache.version
+        env_vars["CACHE_PORT"] = project.cache.port
+
+    if project.email is not None:
+        env_vars["EMAIL_SMTP_PORT"] = project.email.smtp_port
+        env_vars["EMAIL_HTTP_PORT"] = project.email.http_port
+
+    try:
+        run_docker_compose(project.name, ["up"], env_vars)
+    except Exception as e:
+        run_docker_compose(project.name, ["down"], env_vars)
 
     return True
 

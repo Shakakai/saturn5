@@ -1,12 +1,32 @@
 {
   "name": "django-todo-react",
+  "version": "1.0",
   "backend": {
-    "djangoDir": "./backend"
+    "directory": "./backend",
+    "port": 5000
   },
   "frontend": {
-    "buildDir": "./frontend",
+    "directory": "./frontend",
     "buildCommand": "npm install && npm build",
-    "serveDir": "./frontend/build",
-    "nodeVersion": "6.1.14"
+    "developmentCommand": "npm install && npm start",
+    "buildDirectory": "./frontend/build",
+    "nodeVersion": "6.1.14",
+    "port": 8000
+  },
+  "database": {
+    "engine": "postgres",
+    "version": "12.3",
+    "port": 5432,
+    "username": "admin",
+    "password": "test"
+  },
+  "cache": {
+    "engine": "redis",
+    "version": "5.0",
+    "port": 6379
+  },
+  "email": {
+    "httpPort": 8025,
+    "smtpPort": 1025
   }
 }
