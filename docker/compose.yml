@@ -27,8 +27,17 @@ services:
         source: $BACKEND_DIR
         target: /app
 
-  frontend:
-    image: shakakai/local-frontend-server:latest
+  frontend_server:
+    image: nginx:1.19.3
+    volumes:
+      - type: bind
+        source: $FRONTEND_BUILD_DIR
+        target: /usr/share/nginx/html
+    ports:
+      - "${FRONTEND_PORT}:80"
+
+  frontend_builder:
+    image: shakakai/local-frontend-builder:latest
     volumes:
       - type: bind
         source: $FRONTEND_DIR
