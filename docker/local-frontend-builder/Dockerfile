@@ -1,5 +1,7 @@
 FROM ubuntu:14.04.3
 
+ARG NODE_VERSION=14
+
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
@@ -17,17 +19,11 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         wget \
     && rm -rf /var/lib/apt/lists/*
 
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 0.10.33
-
-RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.20.0/install.sh | bash
-RUN . $NVM_DIR/nvm.sh
-
-# Install Yarn
+# Install Node & Yarn
+RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-
-RUN apt-get install -y -q --no-install-recommends yarn
+RUN apt-get update && apt-get install -y -q yarn nodejs
 
 # Setup the startup script
 COPY ./builder.sh /start

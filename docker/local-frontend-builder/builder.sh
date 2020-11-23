@@ -6,17 +6,6 @@
 
 cd /app || exit
 
-ls -l
-
-echo $("/usr/local/nvm --version")
-
-cd /home
-
-ls -l
-
-nvm install -s "$NODE_VERSION"
-nvm use "$NODE_VERSION"
-
 eval "$FRONTEND_BUILD_CMD"
 
 if [ -z "$FRONTEND_BUILD_DIR" ]
