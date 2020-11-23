@@ -1,0 +1,15 @@
+version: "3.2"
+
+services:
+
+  backend:
+    build: ../
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    environment:
+      - NODE_VERSION=14.15.0
+      - FRONTEND_BUILD_CMD=yarn build
+      - FRONTEND_DEV_CMD=yarn dev
+      - FRONTEND_BUILD_DIR=./

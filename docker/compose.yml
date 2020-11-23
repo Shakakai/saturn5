@@ -8,7 +8,7 @@ services:
       - database
       - cache
       - mail
-      - frontend
+      - frontend_server
     volumes:
       - type: bind
         source: $BACKEND_DIR
@@ -29,6 +29,8 @@ services:
 
   frontend_server:
     image: nginx:1.19.3
+    depends_on:
+      - frontend_builder
     volumes:
       - type: bind
         source: $FRONTEND_BUILD_DIR
@@ -47,8 +49,6 @@ services:
       - FRONTEND_BUILD_CMD=$FRONTEND_BUILD_CMD
       - FRONTEND_DEV_CMD=$FRONTEND_DEV_CMD
       - FRONTEND_BUILD_DIR=$FRONTEND_BUILD_DIR
-    ports:
-      - "${FRONTEND_PORT}:80"
 
   database:
     image: postgres:$DATABASE_VERSION

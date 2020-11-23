@@ -6,6 +6,19 @@
 
 cd /app || exit
 
+ls -l
+
+echo $("/usr/local/nvm --version")
+
+cd /home
+
+ls -l
+
+nvm install -s "$NODE_VERSION"
+nvm use "$NODE_VERSION"
+
+eval "$FRONTEND_BUILD_CMD"
+
 if [ -z "$FRONTEND_BUILD_DIR" ]
 then
   echo "\$FRONTEND_BUILD_DIR doesn't exist"
@@ -21,9 +34,3 @@ then
 else
   eval "$FRONTEND_DEV_CMD"
 fi
-
-NVM_CMD="/var/cache/nginx/.nvm/nvm.sh"
-echo $("$NVM_CMD --version")
-
-"$NVM_CMD" install -s "$NODE_VERSION"
-"$NVM_CMD" use "$NODE_VERSION"

@@ -104,6 +104,7 @@ MAIN_SCHEMA = {
 
 SATURN_JSON = "./saturn5.json"
 
+
 def key_exists_and_isnt_none(obj, key):
     return key in obj and obj[key] is not None
 
@@ -111,12 +112,13 @@ def key_exists_and_isnt_none(obj, key):
 def rel_path(pth):
     return Path.cwd() / Path(pth)
 
+
 class Frontend:
     def __init__(self, metadata):
         self.directory = rel_path(metadata["directory"])
         self.build_command = metadata["buildCommand"]
         self.development_command = metadata["developmentCommand"]
-        self.build_directory = metadata["buildDirectory"]
+        self.build_directory = rel_path(metadata["buildDirectory"])
         self.node_version = metadata["nodeVersion"]
         self.port = metadata["port"]
 

@@ -20,16 +20,16 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 0.10.33
 
-# Install nvm with node and npm
-# COPY ./nvm_install.sh /nvm_install.sh
-# RUN chmod +x /nvm_install.sh
-# RUN /nvm_install.sh
 RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.20.0/install.sh | bash
 RUN . $NVM_DIR/nvm.sh
 
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
+# Install Yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
+RUN apt-get install -y -q --no-install-recommends yarn
+
+# Setup the startup script
 COPY ./builder.sh /start
 RUN chmod +x /start
 
