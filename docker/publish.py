@@ -1,16 +1,11 @@
 import os
 from pathlib import Path
+from saturn5.project import ACCEPTED_NODE_VERSIONS
 
 PYTHON_BASE = "python-base"
 LOCAL_DJANGO_WORKER = "local-django-worker"
 LOCAL_DJANGO_SERVER = "local-django-server"
 LOCAL_FRONTEND_BUILDER = "local-frontend-builder"
-ACCEPTED_NODE_VERSIONS = [
-    "10",
-    "12",
-    "14",
-    "15"
-]
 
 
 def run_docker_build(context_path, tag, build_args=None):

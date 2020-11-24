@@ -48,7 +48,7 @@ def run():
     if project.frontend is not None:
         env_vars["FRONTEND_DIR"] = str(project.frontend.directory)
         env_vars["FRONTEND_PORT"] = str(project.frontend.port)
-        env_vars["NODE_VERSION"] = project.frontend.node_version
+        env_vars["NODE_VERSION"] = project.frontend.node_major_version
         env_vars["FRONTEND_BUILD_CMD"] = project.frontend.build_command
         env_vars["FRONTEND_DEV_CMD"] = project.frontend.development_command
         env_vars["FRONTEND_BUILD_DIR"] = str(project.frontend.build_directory)

@@ -10,7 +10,7 @@
     "buildCommand": "yarn && yarn build",
     "developmentCommand": "yarn && yarn start",
     "buildDirectory": "./frontend/build",
-    "nodeVersion": "6.1.14",
+    "nodeVersion": "14.1.1",
     "port": 8000
   },
   "database": {

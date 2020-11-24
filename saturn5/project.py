@@ -113,6 +113,14 @@ def rel_path(pth):
     return Path.cwd() / Path(pth)
 
 
+ACCEPTED_NODE_VERSIONS = [
+    "10",
+    "12",
+    "14",
+    "15"
+]
+
+
 class Frontend:
     def __init__(self, metadata):
         self.directory = rel_path(metadata["directory"])
@@ -120,6 +128,11 @@ class Frontend:
         self.development_command = metadata["developmentCommand"]
         self.build_directory = rel_path(metadata["buildDirectory"])
         self.node_version = metadata["nodeVersion"]
+        self.node_major_version = self.node_version.split(".")[0]
+        if self.node_major_version not in ACCEPTED_NODE_VERSIONS:
+            raise Exception(f"Node version is not supported. \n" +
+                            f"Major Node version provided: {self.node_major_version} \n" +
+                            f"Accepted Major Node versions: {ACCEPTED_NODE_VERSIONS}")
         self.port = metadata["port"]
 
 
